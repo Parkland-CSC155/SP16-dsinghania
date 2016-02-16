@@ -9,7 +9,6 @@
   "author": "CSC 155",
   "license": "MIT",
   "dependencies": {
-    "colors": "^1.1.2",
-    "fs-extra": "^0.26.5"
+    "colors": "^1.1.2"
   }
 }
