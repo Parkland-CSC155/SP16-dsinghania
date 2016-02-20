@@ -26,7 +26,7 @@ doSomethingAsync(function(result) {
 
 var me = {
     someNewFunc: function() {
-        
+        //anything
     }
     
 }
