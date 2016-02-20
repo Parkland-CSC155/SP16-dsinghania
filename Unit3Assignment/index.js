@@ -1,6 +1,6 @@
 //We need to use require to use the modules- process, filesystem, path and colors 
 console.log("starting...");
-var DEBUG = false; //make it true while debugging
+
 var process = require("process");
 var fs = require('fs');
 var path = require('path');
@@ -9,20 +9,19 @@ var colors = require("colors");
 //Obtain the location of the logs folder from the 3rd parameter
 // passed into the command line statement
 var logsFolder = process.argv[2];
+//console.log(logsFolder);  
 
-//console.log(logsFolder);  //if DEBUG is true make it log(logsFolder) to debug the errors
-
-console.log("creating[processed] directories if not exists...");
+console.log("creating [processed] directories if not exists...");
 
 //ensures that relative paths are resolved to absolute paths
-var absPath = path.resolve(logsFolder);
+var logsFolderPath = path.resolve(logsFolder);
 
 //Creates a folder named “processed” inside the “logs” folder
 var processedFolder = path.join(logsFolder, "processed");
 fs.mkdirSync(processedFolder);
 
 //Creates a folder for each year prefix
-//on the log files so that the logs can be sorted by year
+//so that the logs can be sorted by year
 
 var folder2014 = path.join(processedFolder, "2014");
 fs.mkdirSync(folder2014);
@@ -46,22 +45,19 @@ console.log(colors.green("sorting files..."));
 for(var i = 0; i < rawFilesArray.length; i++) {
     
     if ( rawFilesArray[i].startsWith("2014") ) {
-        var oldPath = "logs/raw/" + rawFilesArray[i];
-        var newPath = "logs/processed/2014/" + rawFilesArray[i];
+        var oldPath = path.join(logsFolderPath, "raw", rawFilesArray[i]);
+        var newPath = path.join(folder2014 , rawFilesArray[i]);
         fs.renameSync(oldPath, newPath );
-        //fs.renameSync("logs/raw/" + rawFilesArray[i], "logs/processed/2014/" + rawFilesArray[i]);
     }
     else if( rawFilesArray[i].startsWith("2015") ) {
-        var oldPath = "logs/raw/" + rawFilesArray[i];
-        var newPath = "logs/processed/2015/" + rawFilesArray[i];
+        var oldPath = path.join(logsFolderPath, "raw", rawFilesArray[i]);
+        var newPath = path.join(folder2015 , rawFilesArray[i]);
          fs.renameSync(oldPath, newPath );
-        //fs.renameSync("logs/raw/" + rawFilesArray[i], "logs/processed/2015/" + rawFilesArray[i]);
     }
     else if( rawFilesArray[i].startsWith("2016") ) {
-        var oldPath = "logs/raw/" + rawFilesArray[i];
-        var newPath = "logs/processed/2016/" + rawFilesArray[i];
+        var oldPath = path.join(logsFolderPath, "raw", rawFilesArray[i]);
+        var newPath = path.join(folder2016 , rawFilesArray[i]);
         fs.renameSync(oldPath, newPath );
-        //fs.renameSync("logs/raw/" + rawFilesArray[i], "logs/processed/2016/" + rawFilesArray[i]);
     }
 }
 
@@ -76,9 +72,3 @@ console.log(colors.blue("moved [" + fileArray2014.length + "] logs into processe
 console.log(colors.blue("moved [" + fileArray2015.length + "] logs into processed\\2015"));
 console.log(colors.blue("moved [" + fileArray2016.length + "] logs into processed\\2016"));
 console.log(colors.green("...finished!"));
-
-function log(msg) {
-    if(DEBUG) {
-        console.log(msg);
-    }
-}
