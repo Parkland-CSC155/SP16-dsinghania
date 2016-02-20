@@ -12,7 +12,7 @@ if (process.argv.indexOf("-v") > -1) {
 //handle the file output flag
 if (process.argv.indexOf("-output") > -1) {
     
-    //the -v/output flag has been included
+    //the -output flag has been included
     var argIndex = process.argv.indexOf("-output");
     argIndex = argIndex + 1;
     
