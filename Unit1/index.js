@@ -107,3 +107,4 @@ console.log(myFruits);
 fruits = ["limes", "bananas", "apples", "oranges","kiwis", "lemons" ];
 myFruits = fruits.join("-");
 console.log(myFruits);
+console.log("done!!");
