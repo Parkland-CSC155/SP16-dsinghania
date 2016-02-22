@@ -12,7 +12,6 @@ log4js.configure({
 var logger = log4js.getLogger('file-logger');
 
 //handle the -v flag
-
 if(process.argv.indexOf("-v") > -1) {
     
     //this means -v flag has been included
@@ -41,18 +40,42 @@ if(process.argv.indexOf("-output") >= 0) {
      //the -output flag has been included
    outputIndex = process.argv.indexOf("-output");
    outputIndex += 1;
-    
-    //this grabs the next parameter inn out arguments array
    outputFileName = process.argv[outputIndex];
    //console.log(outputFileName);
 }
+var outputFolder, inputFolder;
+          
+if (path.isAbsolute(inputFileName))
+    inputFolder = inputFileName;
+else
+    //Resolves to an absolute path
+    inputFolder = path.resolve(inputFileName);
+    //console.log("inputFolder is: " + inputFolder);
 
-var outputFolderPath = path.join(__dirname, outputFileName);
-//console.log("output folder is : " + outputFolder);
+if (path.isAbsolute(outputFileName))
+    outputFolder = outputFileName;
+else
+    //Join all arguments together normalizing the resulting path.
+    outputFolder = path.join(__dirname, outputFileName);
+    //console.log("output folder is : " + outputFolder); 
 
-var inputFolder = path.resolve(inputFileName);
-//console.log("inputFolder is: " + inputFolder);
+/*    
+//checks to see if the input/output file name entered is correct  
+fs.accessSync(outputFolder, fs.W_OK, function(err){
+    if(err) {
+        console.log("Invalid output file name");
+        process.exit(1);
+    }
+});           
 
+fs.accessSync(inputFolder, fs.R_OK, function(err){
+     if(err) {
+        console.log("Invalid input file name");
+        process.exit(1);
+    }
+}); 
+*/
+    
 var inputFileArray = fs.readdirSync(inputFolder);
 //console.log(inputFileArray);
 
@@ -112,13 +135,11 @@ for(var i = 0 ; i < inputFileArray.length ; i++) {
     outputContent += data.dataset.dataset_code + "\t\t\t" +  high + "\t\t\t" + low + "\t\t\t\t" + avg_Settle + "\t\t\t\t\t" + len + "\n";
 }
 
-fs.writeFileSync(outputFolderPath, outputContent);
+fs.writeFileSync(outputFolder, outputContent);
     
 console.log("done!!!");
-
-//verbose is just a variable to hold whether theh '-v' flag was passed
-/*if(verbose) {
-    logger.setLevel("TRACE");
-} else {
-    logger.setLevel("INFO");
-}*/
+/*
+function isAbsolute(p) {
+      return path.normalize(p + '/') === path.normalize(path.resolve(p) + '/');
+} 
+ */  
