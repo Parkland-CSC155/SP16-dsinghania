@@ -29,7 +29,7 @@ if(process.argv.indexOf("-input") >= 0) {
     inputIndex = process.argv.indexOf("-input");
     inputIndex += 1;
     inputFileName = process.argv[inputIndex];   
-    //console.log("input file is : " + inputFile); 
+    console.log("input file is : " + inputFileName); 
 }
 
 //handle the output file flag
@@ -41,41 +41,38 @@ if(process.argv.indexOf("-output") >= 0) {
    outputIndex = process.argv.indexOf("-output");
    outputIndex += 1;
    outputFileName = process.argv[outputIndex];
-   //console.log(outputFileName);
+   console.log("the output file is : " + outputFileName);
 }
-var outputFolder, inputFolder;
+
+var outputFolder, inputFolder, stats;
           
-if (path.isAbsolute(inputFileName))
-    inputFolder = inputFileName;
-else
-    //Resolves to an absolute path
-    inputFolder = path.resolve(inputFileName);
-    //console.log("inputFolder is: " + inputFolder);
+if (path.isAbsolute(inputFileName)) 
+        inputFolder = inputFileName;
+else 
+        //Resolves to an absolute path
+         inputFolder = path.resolve(inputFileName);
+         
+console.log("inputFolder is: " + inputFolder);
 
-if (path.isAbsolute(outputFileName))
-    outputFolder = outputFileName;
-else
-    //Join all arguments together normalizing the resulting path.
-    outputFolder = path.join(__dirname, outputFileName);
-    //console.log("output folder is : " + outputFolder); 
-
-/*    
-//checks to see if the input/output file name entered is correct  
-fs.accessSync(outputFolder, fs.W_OK, function(err){
-    if(err) {
-        console.log("Invalid output file name");
-        process.exit(1);
-    }
-});           
-
-fs.accessSync(inputFolder, fs.R_OK, function(err){
-     if(err) {
+if(!pathExistsSync(inputFolder)) {      
         console.log("Invalid input file name");
         process.exit(1);
-    }
-}); 
-*/
-    
+}
+
+if (isAbsolute(outputFileName))
+     outputFolder = outputFileName;
+else 
+     outputFolder = path.join(__dirname, outputFileName);
+        
+console.log("output folder is : " + outputFolder);
+
+console.log("dir name of output folder is: " + path.dirname(outputFolder));    
+
+if(!pathExistsSync(path.dirname(outputFolder))) {     
+        console.log("Invalid output file name");
+        process.exit(1);    
+}
+
 var inputFileArray = fs.readdirSync(inputFolder);
 //console.log(inputFileArray);
 
@@ -132,14 +129,43 @@ for(var i = 0 ; i < inputFileArray.length ; i++) {
     //console.log(data.dataset.dataset_code + "\t\t\t" +  high + "\t\t" + low + "\t\t\t" + avg_Settle + "\t\t\t" + len);
         
     //output contents to the destination file
-    outputContent += data.dataset.dataset_code + "\t\t\t" +  high + "\t\t\t" + low + "\t\t\t\t" + avg_Settle + "\t\t\t\t\t" + len + "\n";
+    outputContent += data.dataset.dataset_code + "\t\t\t" +  high + "\t\t\t" + low +
+                     "\t\t\t\t" + avg_Settle + "\t\t\t\t\t" + len + "\n";
 }
 
 fs.writeFileSync(outputFolder, outputContent);
     
 console.log("done!!!");
+
+function pathExistsSync(path){
+
+    try {
+        stats = fs.statSync(path);  // it will throw an error if the path is bad
+        return true; 
+    }
+    catch(e){  
+      return false; 
+     }
+     //return false; 
+}  
+
 /*
 function isAbsolute(p) {
       return path.normalize(p + '/') === path.normalize(path.resolve(p) + '/');
-} 
- */  
+}
+  
+//checks to see if the input/output file name entered is correct  
+fs.accessSync(outputFolder, fs.W_OK, function(err){
+    if(err) {
+        console.log("Invalid output file name");
+        process.exit(1);
+    }
+});           
+
+fs.accessSync(inputFolder, fs.R_OK, function(err){
+     if(err) {
+        console.log("Invalid input file name");
+        process.exit(1);
+    }
+}); 
+*/
