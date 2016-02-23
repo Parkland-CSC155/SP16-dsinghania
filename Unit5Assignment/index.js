@@ -59,7 +59,7 @@ if(!pathExistsSync(inputFolder)) {
         process.exit(1);
 }
 
-if (isAbsolute(outputFileName))
+if (path.isAbsolute(outputFileName))
      outputFolder = outputFileName;
 else 
      outputFolder = path.join(__dirname, outputFileName);
