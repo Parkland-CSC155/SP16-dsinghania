@@ -33,41 +33,40 @@ if(!pathExists(inputFolder)) {
     process.exit(1);
 }
 
+var ctr = 0;
 readDirAsync(inputFolder, function(err3, inputFileArray){
-     if(err3){
+    if(err3){
         console.log(err3);
         return;
-     }
+    }
     //console.log("inputFileArray is " + inputFileArray);
     
     for(var i = 0 ; i < inputFileArray.length ; i++) { 
         
         var fullPath = path.join(inputFolder, inputFileArray[i]); 
                 
-        readAndParseJson(fullPath, function(err, data){
+        readAndParseJson(fullPath, inputFileArray[i], function(err, data){
+            
             if(err){
                 console.log(err);
-            return;
+                return;
             } 
             var name = data.dataset.name;
             var desc = data.dataset.description;
             
-            var fileName = inputFileArray[i];
-            console.log("Reading File: " + fileName);
+            console.log(name + ": " + desc);
+            console.log();
+            ctr++;
+            //console.log("ctr is : " + ctr); 
         
-            console.log("name is : " + name);
-            console.log("description is : " + desc);
-            
-            });
-        }
-        
-});     
-  
-console.log("Done!!!");
-
+             if(ctr === inputFileArray.length)
+                console.log("Done!!!");     
+        });
+     }  
+});  
 function pathExists(path){
     
- //fs.accessSync only works on files and not directories, whereas fs.statSync works on both.
+    //fs.accessSync only works on files and not directories, whereas fs.statSync works on both.
     try {
         var stats = fs.stat(path);  // it will throw an error if the path is bad
         return true; 
@@ -79,7 +78,7 @@ function pathExists(path){
 
 //helper function that can have potential errors
 //and a return value
-function readAndParseJson(filePath, callback){
+function readAndParseJson(filePath, fileName, callback){
     
     fs.readFile(filePath,"utf8", function(err, result){
     
@@ -92,6 +91,9 @@ function readAndParseJson(filePath, callback){
         }
         //result is a UTF-8 string
         var parsedObject = JSON.parse(result);
+        
+        //output the file name
+        console.log("Reading File: " + fileName);
         
         //give back the parsedObject
         callback(null, parsedObject);       //first argument is for error
