@@ -68,7 +68,7 @@ function pathExists(path){
     
     //fs.accessSync only works on files and not directories, whereas fs.statSync works on both.
     try {
-        var stats = fs.stat(path);  // it will throw an error if the path is bad
+        fs.stat(path, function(err, stats){});  // it will throw an error if the path is bad
         return true; 
     }
     catch(e){  
