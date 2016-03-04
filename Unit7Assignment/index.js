@@ -1,3 +1,4 @@
+//async programming
 console.log("starting...");
 
 var process = require("process");
@@ -16,21 +17,28 @@ var folder2014 = path.join(processedFolder, "2014");
 var folder2015 = path.join(processedFolder, "2015");
 var folder2016 = path.join(processedFolder, "2016");
 
-var numFilesRenamed = 0, numFilesMoved = 0;
+var numFilesRenamed = 0, numFilesMoved = 0, rawLength;
 
 mkdirIfNotExists(processedFolder, function(){  
-    //console.log("processed folder created");
-    
+    //console.log("processed folder created");  
+      
     mkdirIfNotExists(folder2014, function(){     
-       //console.log("2014 folder created");
-    });    
-    mkdirIfNotExists(folder2015, function(){
-       // console.log("2015 folder created");
-    });    
-    mkdirIfNotExists(folder2016, function(){
-      //  console.log("2016 folder created");
-    });  
+        //console.log("2014 folder created");   
+         
+        mkdirIfNotExists(folder2015, function(){
+            //console.log("2015 folder created");
+            
+            mkdirIfNotExists(folder2016, function(){
+                 //console.log("2016 folder created");
+                 
+                  sortFiles();
+            });  
+        });               
+    });
+});
 
+//async helper functions
+function sortFiles(){
     readDirAsync(rawFolder, function(err1, rawFilesArray){
         if(err1){
             console.log(err1);
@@ -39,7 +47,7 @@ mkdirIfNotExists(processedFolder, function(){
         //console.log("rawFilesArray is " + rawFilesArray);
         console.log(colors.green("sorting files..."));
             
-        var rawLength = rawFilesArray.length;
+        rawLength = rawFilesArray.length;
         //console.log("rawLength is " + rawLength);
             
         rawFilesArray.forEach(function(file) {
@@ -65,10 +73,8 @@ mkdirIfNotExists(processedFolder, function(){
             }
         }); 
     });
-});
-
-//async helper functions
-function countFiles(rawLength, callback){
+}
+function countFiles(){
     //count the total number of files that were sorted into each folder
     readDirAsync(folder2014, function(err2, folder14Array){
         if(err2){
@@ -79,6 +85,7 @@ function countFiles(rawLength, callback){
         numFilesMoved += count2014;
         console.log(("moved [" + count2014 + "] logs into processed\\2014").cyan);
         //console.log("numFilesMoved is now: " + numFilesMoved);
+        countFilesDone();
     });
        
     readDirAsync(folder2015, function(err3, folder15Array){
@@ -90,6 +97,7 @@ function countFiles(rawLength, callback){
         numFilesMoved += count2015;
         console.log(("moved [" + count2015 + "] logs into processed\\2015").cyan);
         //console.log("numFilesMoved is now: " + numFilesMoved);
+        countFilesDone();
     });
         
     readDirAsync(folder2016, function(err4, folder16Array){
@@ -101,10 +109,13 @@ function countFiles(rawLength, callback){
         numFilesMoved += count2016;
         console.log(("moved [" + count2016 + "] logs into processed\\2016").cyan);
         //console.log("numFilesMoved is now: " + numFilesMoved);
+        countFilesDone();
     });
+}
+
+function countFilesDone(){
     
-    //callback(numFilesMoved);
-    console.log("numFilesMoved is: " + numFilesMoved);
+    //console.log("numFilesMoved is: " + numFilesMoved);
     if(numFilesMoved === rawLength)
        console.log("...finished!".green);
 }
@@ -119,10 +130,7 @@ function reNameFileAsync(oldPath, newPath, rawLength, callback) {
         numFilesRenamed++;
         //console.log("numFilesRenamed inside renameFileAsync is now: " + numFilesRenamed);
         if(numFilesRenamed === rawLength)      
-            countFiles(rawLength);/*, function(num){
-                if(num === numFilesRenamed)
-                   console.log("...finished!".green);                
-            });*/
+            countFiles();
         callback();
     });
 } 
