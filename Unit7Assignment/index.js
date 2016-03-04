@@ -68,7 +68,7 @@ mkdirIfNotExists(processedFolder, function(){
 });
 
 //async helper functions
-function countFiles(callback){
+function countFiles(rawLength, callback){
     //count the total number of files that were sorted into each folder
     readDirAsync(folder2014, function(err2, folder14Array){
         if(err2){
@@ -103,10 +103,10 @@ function countFiles(callback){
         //console.log("numFilesMoved is now: " + numFilesMoved);
     });
     
-    callback(numFilesMoved);
-    //console.log("numFilesMoved is: " + numFilesMoved);
-    //if(numFilesMoved === rawLength)
-    //   console.log("...finished!".green);
+    //callback(numFilesMoved);
+    console.log("numFilesMoved is: " + numFilesMoved);
+    if(numFilesMoved === rawLength)
+       console.log("...finished!".green);
 }
 
 function reNameFileAsync(oldPath, newPath, rawLength, callback) {
@@ -119,10 +119,10 @@ function reNameFileAsync(oldPath, newPath, rawLength, callback) {
         numFilesRenamed++;
         //console.log("numFilesRenamed inside renameFileAsync is now: " + numFilesRenamed);
         if(numFilesRenamed === rawLength)      
-            countFiles(function(num){
-                if(num === rawLength)
+            countFiles(rawLength);/*, function(num){
+                if(num === numFilesRenamed)
                    console.log("...finished!".green);                
-            });
+            });*/
         callback();
     });
 } 
