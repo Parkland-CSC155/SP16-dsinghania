@@ -20,7 +20,7 @@ var folder2015 = path.join(processedFolder, "2015");
 var folder2016 = path.join(processedFolder, "2016");
 
 var numFilesRenamed = 0, numFilesMoved = 0, rawLength;
-
+var allPromises = [];
 var prom1 = mkdirIfNotExistsPromise(processedFolder);  
 //log("Creating processed folder");
   
@@ -51,9 +51,13 @@ prom1.then(function(result){
 .then(function(result){
      //log("2016 folder created"); 
 })
-.then(function(result){          
-     sortFiles();    
+.then(function(result){       
+    console.log(colors.green("sorting files..."));       
+    sortFiles();    
 })
+.then(function(result){
+    countFiles();
+})    
 .catch(function(err){
     console.log(err);
 });
@@ -66,7 +70,6 @@ function sortFiles(){
     rawFilesArrayProm.then(function(rawFilesArray){
         
         //log("rawFilesArray is " + rawFilesArray);
-        console.log(colors.green("sorting files..."));
             
         rawLength = rawFilesArray.length;
         //log("rawLength is " + rawLength);
@@ -77,27 +80,39 @@ function sortFiles(){
             if(file.startsWith("2014")) {
                 var newPath1 = path.join(folder2014, file);
                 var file2014 = reNameFileAsyncPromise(oldPath, newPath1, rawLength);
-               /* file2014.then(function(result){
+                file2014.then(function(result){
                     //log("2014 file moved");
-                });*/
+                    allPromises.push(file2014);
+                });
             }
             if(file.startsWith("2015")) {
                 var newPath2 = path.join(folder2015, file);
                 var file2015 = reNameFileAsyncPromise(oldPath, newPath2, rawLength);
-               /* file2014.then(function(result){
+                file2015.then(function(result){
                     //log("2015 file moved");
-                });*/
+                    allPromises.push(file2015);
+                });
             }
             if(file.startsWith("2016")) {
                 var newPath3 = path.join(folder2016, file);
                 var file2016 = reNameFileAsyncPromise(oldPath, newPath3, rawLength);
-                /*file2016.then(function(result){
+                file2016.then(function(result){
                     //log("2016 file moved");
-                })*/
+                    allPromises.push(file2016);
+                });
             }
-        });         
-    });        
+        });          
+        Promise.all(allPromises).then(function(result){
+            console.log("all the files have been moved!");
+            console.log(result);    // no output
+            return result; 
+        })
+        .catch(function(err){
+            console.log(err);
+        });            
+    });
 }
+
 function countFiles(){
     
     //count the total number of files that were sorted into each folder
@@ -127,6 +142,7 @@ function countFiles(){
         //log("numFilesMoved is now: " + numFilesMoved);
         countFilesDone();
     });
+    
 }
 
 function countFilesDone(){    
@@ -143,8 +159,8 @@ function reNameFileAsyncPromise(oldPath, newPath, rawLength) {
             else {
                 numFilesRenamed++;
                 //log("numFilesRenamed inside renameFileAsyncPromise is now: " + numFilesRenamed);
-                if(numFilesRenamed === rawLength)      
-                    countFiles();
+                //if(numFilesRenamed === rawLength)      
+                    //countFiles();
                 resolve(newPath);
             }
         });        
