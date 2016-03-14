@@ -19,21 +19,15 @@ var folder2014 = path.join(processedFolder, "2014");
 var folder2015 = path.join(processedFolder, "2015");
 var folder2016 = path.join(processedFolder, "2016");
 
-var numFilesRenamed = 0, numFilesMoved = 0, rawLength;
+var numFilesRenamed = 0, numFilesMoved = 0, rawLength = 0;
 var allPromises = [];
 var prom1 = mkdirIfNotExistsPromise(processedFolder);  
 //log("Creating processed folder");
   
 prom1.then(function(result){
-    //log("processed folder created");
-})  
-.then(function(result){
      var prom2 = mkdirIfNotExistsPromise(folder2014);
      //log("creating 2014 folder");
      return prom2;
-})
-.then(function(result){
-    // log("2014 folder created"); 
 })
 .then(function(result){
      var prom3 = mkdirIfNotExistsPromise(folder2015);
@@ -41,28 +35,25 @@ prom1.then(function(result){
      return prom3;
 })
 .then(function(result){
-     //log("2015 folder created"); 
-})
-.then(function(result){
      var prom4 = mkdirIfNotExistsPromise(folder2016);
      //log("creating 2016 folder");
      return prom4;
 })
-.then(function(result){
-     //log("2016 folder created"); 
-})
 .then(function(result){       
     console.log(colors.green("sorting files..."));       
-    sortFiles();    
+    return sortFiles();    
 })
 .then(function(result){
-    countFiles();
-})    
+    return countFiles();
+})
+.then(function(result){
+    countFilesDone();
+})
 .catch(function(err){
     console.log(err);
 });
 
-//async helper functions
+//async and promise helper functions
 function sortFiles(){
     
     var rawFilesArrayProm = readDirAsyncPromise(rawFolder);
@@ -72,95 +63,84 @@ function sortFiles(){
         //log("rawFilesArray is " + rawFilesArray);
             
         rawLength = rawFilesArray.length;
-        //log("rawLength is " + rawLength);
+        //console.log("rawLength is " + rawLength);
             
         rawFilesArray.forEach(function(file) {
             var oldPath = path.resolve(rawFolder, file);
         
             if(file.startsWith("2014")) {
                 var newPath1 = path.join(folder2014, file);
-                var file2014 = reNameFileAsyncPromise(oldPath, newPath1, rawLength);
-                file2014.then(function(result){
-                    //log("2014 file moved");
-                    allPromises.push(file2014);
-                });
+                var file2014 = reNameFileAsyncPromise(oldPath, newPath1);
+                allPromises.push(file2014);
             }
             if(file.startsWith("2015")) {
                 var newPath2 = path.join(folder2015, file);
-                var file2015 = reNameFileAsyncPromise(oldPath, newPath2, rawLength);
-                file2015.then(function(result){
-                    //log("2015 file moved");
-                    allPromises.push(file2015);
-                });
+                var file2015 = reNameFileAsyncPromise(oldPath, newPath2);
+                allPromises.push(file2015);
             }
             if(file.startsWith("2016")) {
                 var newPath3 = path.join(folder2016, file);
-                var file2016 = reNameFileAsyncPromise(oldPath, newPath3, rawLength);
-                file2016.then(function(result){
-                    //log("2016 file moved");
-                    allPromises.push(file2016);
-                });
+                var file2016 = reNameFileAsyncPromise(oldPath, newPath3);
+                allPromises.push(file2016);
             }
         });          
-        Promise.all(allPromises).then(function(result){
-            console.log("all the files have been moved!");
-            console.log(result);    // no output
-            return result; 
-        })
-        .catch(function(err){
-            console.log(err);
-        });            
+        return Promise.all(allPromises); // this signals to the rawFilesArrayProm that we're done moving files     
     });
+    return rawFilesArrayProm; // this is so the sortFiles() function can signal when it is done
 }
 
 function countFiles(){
     
+    var newPromArr = [];
+    
     //count the total number of files that were sorted into each folder
     var folder14ArrayProm = readDirAsyncPromise(folder2014);
+    newPromArr.push(folder14ArrayProm);
+    
     folder14ArrayProm.then(function(folder14Array){
         var count2014 = folder14Array.length;
         numFilesMoved += count2014;
         console.log(("moved [" + count2014 + "] logs into processed\\2014").cyan);
-        //log("numFilesMoved is now: " + numFilesMoved);
-        countFilesDone();        
+        //console.log("numFilesMoved is now: " + numFilesMoved);
+        //countFilesDone();        
     });
        
     var folder15ArrayProm = readDirAsyncPromise(folder2015);
+    newPromArr.push(folder15ArrayProm);
+    
     folder15ArrayProm.then(function(folder15Array){
         var count2015 = folder15Array.length;
         numFilesMoved += count2015;
         console.log(("moved [" + count2015 + "] logs into processed\\2015").cyan);
-        //log("numFilesMoved is now: " + numFilesMoved);
-        countFilesDone();
+        //console.log("numFilesMoved is now: " + numFilesMoved);
+        //countFilesDone();
     });
         
     var folder16ArrayProm = readDirAsyncPromise(folder2016);
+    newPromArr.push(folder16ArrayProm);
+   
     folder16ArrayProm.then(function(folder16Array){
         var count2016 = folder16Array.length;
         numFilesMoved += count2016;
         console.log(("moved [" + count2016 + "] logs into processed\\2016").cyan);
-        //log("numFilesMoved is now: " + numFilesMoved);
-        countFilesDone();
+        //console.log("numFilesMoved is now: " + numFilesMoved);
+        //countFilesDone();
     });
+    return Promise.all(newPromArr);
+}
+
+function countFilesDone(){ 
     
-}
-
-function countFilesDone(){    
-    //log("numFilesMoved is: " + numFilesMoved);
     if(numFilesMoved === rawLength)
-       console.log("...finished!".green);
+        console.log("...finished!".green);
 }
 
-function reNameFileAsyncPromise(oldPath, newPath, rawLength) {
+function reNameFileAsyncPromise(oldPath, newPath) {
     var prom = new Promise(function(resolve, reject){
         fs.rename(oldPath, newPath, function(err){
             if(err)
                 reject(err);
             else {
-                numFilesRenamed++;
-                //log("numFilesRenamed inside renameFileAsyncPromise is now: " + numFilesRenamed);
-                //if(numFilesRenamed === rawLength)      
-                    //countFiles();
                 resolve(newPath);
             }
         });        
