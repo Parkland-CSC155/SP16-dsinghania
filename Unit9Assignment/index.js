@@ -58,7 +58,7 @@ function sortFiles(){
     
     var rawFilesArrayProm = readDirAsyncPromise(rawFolder);
     
-    rawFilesArrayProm.then(function(rawFilesArray){
+   return rawFilesArrayProm.then(function(rawFilesArray){
         
         //log("rawFilesArray is " + rawFilesArray);
             
@@ -86,7 +86,7 @@ function sortFiles(){
         });          
         return Promise.all(allPromises); // this signals to the rawFilesArrayProm that we're done moving files     
     });
-    return rawFilesArrayProm; // this is so the sortFiles() function can signal when it is done
+   // return rawFilesArrayProm; // this is so the sortFiles() function can signal when it is done
 }
 
 function countFiles(){
@@ -94,38 +94,27 @@ function countFiles(){
     var newPromArr = [];
     
     //count the total number of files that were sorted into each folder
-    var folder14ArrayProm = readDirAsyncPromise(folder2014);
-    newPromArr.push(folder14ArrayProm);
-    
-    folder14ArrayProm.then(function(folder14Array){
+    var folder14ArrayProm = readDirAsyncPromise(folder2014).then(function(folder14Array){
         var count2014 = folder14Array.length;
         numFilesMoved += count2014;
         console.log(("moved [" + count2014 + "] logs into processed\\2014").cyan);
-        //console.log("numFilesMoved is now: " + numFilesMoved);
-        //countFilesDone();        
     });
+    newPromArr.push(folder14ArrayProm);
        
-    var folder15ArrayProm = readDirAsyncPromise(folder2015);
-    newPromArr.push(folder15ArrayProm);
-    
-    folder15ArrayProm.then(function(folder15Array){
+    var folder15ArrayProm = readDirAsyncPromise(folder2015).then(function(folder15Array){
         var count2015 = folder15Array.length;
         numFilesMoved += count2015;
         console.log(("moved [" + count2015 + "] logs into processed\\2015").cyan);
-        //console.log("numFilesMoved is now: " + numFilesMoved);
-        //countFilesDone();
     });
+    newPromArr.push(folder15ArrayProm);
         
-    var folder16ArrayProm = readDirAsyncPromise(folder2016);
-    newPromArr.push(folder16ArrayProm);
-   
-    folder16ArrayProm.then(function(folder16Array){
+    var folder16ArrayProm = readDirAsyncPromise(folder2016).then(function(folder16Array){
         var count2016 = folder16Array.length;
         numFilesMoved += count2016;
         console.log(("moved [" + count2016 + "] logs into processed\\2016").cyan);
-        //console.log("numFilesMoved is now: " + numFilesMoved);
-        //countFilesDone();
     });
+    newPromArr.push(folder16ArrayProm);
+    
     return Promise.all(newPromArr);
 }
 
