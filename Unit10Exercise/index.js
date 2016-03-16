@@ -11,11 +11,12 @@ console.log("starting ...");
 
 for( var i = 0; i < urls.length; i++){
     console.log("requesting URL: " + urls[i]);
-    request(urls[i], function(error, response, body) {
+    var url = urls[i];
+    request(url, function(error, response, body) {
         if(!error && response.statusCode == 200) {
-            console.log("received response from URL: " + urls[i]);   
+            console.log("received response from URL: " + url);   
             var parsedJson = JSON.parse(body);
-            console.log(parsedJson);
+            console.log(parsedJson.dataset.name + ": " + parsedJson.dataset.description);
         }
     });
     
