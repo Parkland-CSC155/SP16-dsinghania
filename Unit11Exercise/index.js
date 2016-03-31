@@ -14,7 +14,7 @@ if(process.argv.indexOf("-output") >= 0) {
    outputIndex = process.argv.indexOf("-output");
    outputIndex ++;
    outputFolderName = process.argv[outputIndex];
-   console.log("the output folder name is : " + outputFolderName);
+   //console.log("the output folder name is : " + outputFolderName);
    
 } else {
       console.log("please enter an output folder name");
@@ -27,10 +27,11 @@ else
     outputFolder = path.join(__dirname, outputFolderName);
         
 //console.log("output folder is : " + outputFolder);
+//console.log("dirname of output folder is : " + path.dirname(outputFolder));
 
 pathExistsAsync(path.dirname(outputFolder), function(err, stats){
     if(err){             
-      console.log("Invalid output file name");
+      console.log(outputFolder + ": Invalid output folder name");
       process.exit(1);
     }    
 });
@@ -39,22 +40,20 @@ var customerFolder = path.join(outputFolder, "customers_usa.json");
 var invoiceFolder = path.join(outputFolder, "invoices_2013.json");
 
 mkdirIfNotExists(outputFolder, function(){
-    console.log("outputFolder created");
+    //console.log("outputFolder created");
     
     computeQuery();
 });
 
 function computeQuery(){
         
-    //Find all the customers who are from the “USA” , output those to a “customers_usa.json” file.
-
+    //Find all the customers who are from the “USA”, output those to a “customers_usa.json” file.
     var customerSql = `
             SELECT * FROM customers
             WHERE Country = ?
             `;
 
-    //Find all of the invoices created in 2013, output those to an “invoices_2013.json” file.
-    
+    //Find all of the invoices created in 2013, output those to an “invoices_2013.json” file.    
     var invoiceSql = `
             SELECT * FROm invoices
             WHERE  InvoiceDate BETWEEN "2013-01-01" AND "2013-12-31"
@@ -66,8 +65,8 @@ function computeQuery(){
             
         //console.log(customerRows);
         
-        var cusRows = JSON.stringify(customerRows);
-        fs.writeFile(customerFolder, cusRows, function(err1){            
+        var cusRowsJson = JSON.stringify(customerRows);
+        fs.writeFile(customerFolder, cusRowsJson, function(err1){            
             if(err1)
             console.log(err1);
         });
@@ -78,12 +77,12 @@ function computeQuery(){
             
             //console.log(invoicesRows);
             
-            var invRows = JSON.stringify(invoicesRows);
-            fs.writeFile(invoiceFolder, invRows, function(err2){            
+            var invRowsJson = JSON.stringify(invoicesRows);
+            fs.writeFile(invoiceFolder, invRowsJson, function(err2){            
                 if(err2)
                 console.log(err2);
             }); 
-            
+            console.log("Done !!!");
         });   
     });
 }
@@ -99,17 +98,12 @@ function mkdirIfNotExists(directoryPath, callback){
 }
 function pathExistsAsync(path, callback){
     //fs.access only works on files and not directories, whereas fs.stat works on both.
-    try {
             fs.stat(path, function(err, stats){    // it will throw an error if the path is bad
                 if(err) {
-                    console.log(err);
+                    //console.log(err);
                     callback(err);
-                    return false;
                 }
                 callback(null, stats);
         }); 
-    }
-    catch(e){  
-      return false; 
-     }
+    
 }  
