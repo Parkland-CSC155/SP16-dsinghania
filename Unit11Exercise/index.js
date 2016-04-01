@@ -107,3 +107,14 @@ function pathExistsAsync(path, callback){
         }); 
     
 }  
+// just a helper to make sure we're always
+// working with correctly structured, absolute paths
+function cleanUpPath(pathName){
+    pathName = path.normalize(pathName);
+    
+    if(!path.isAbsolute(pathName)){
+        pathName = path.resolve(pathName);
+    }
+    
+    return pathName;
+}
