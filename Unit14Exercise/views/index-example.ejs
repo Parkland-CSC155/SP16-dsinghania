@@ -33,15 +33,16 @@
                             <th>Air Date</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody> <% data._embedded.episodes.forEach(function(content){ %>
                         <tr>
                             <td>
-                                <a href="#"><%=epiName%></a>
+                                <a href='/episodes/<%=content.id%>'><%=content.name%></a>
                             </td>
-                            <td><%=epiSeason%></td>
-                            <td><%=epiNumber%></td>
-                            <td><%=epiAirDate%></td>
+                            <td><%=content.season%></td>
+                            <td><%=content.number%></td>
+                            <td><%=content.airdate%></td>
                         </tr>
+                         <% }); %>
                     </tbody>
                 </table>
             </div>
