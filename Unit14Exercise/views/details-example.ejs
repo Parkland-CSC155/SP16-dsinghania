@@ -1,24 +1,19 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head><% include partials/page/head.ejs %></head>
-
 <body>
-    <div class="container">
-        
+    <div class="container">        
         <div class="row">
             <div class="col-sm-12">
                 <h1><%=epiName%></h1>
                 <p>Season <%=epiSeason%></p>
                 <p>Episode <%=epiNumber%></p>
                 <p>Aired: <%=epiAirDate%></p>
-                <p>Episode Summary: <%=epiSummary%></p>
+                <p>Episode Summary: <%-epiSummary-%></p>
             </div>
-        </div>
-        
+        </div>        
     </div>
   <% include partials/page/footer.ejs %>
   <% include partials/page/jsdefaults.ejs %>
 </body>
-
 </html>

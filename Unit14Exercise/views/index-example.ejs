@@ -1,17 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head><% include partials/page/head.ejs %></head>
-
 <body>
-    <div class="container">
-        
+    <div class="container">        
         <div class="row">
             <div class="col-sm-12">
                 <h1>Shows</h1>
             </div>
-        </div>
-        
+        </div>        
         <div class="row">
             <div class="col-sm-12">
                 <table class="table">
@@ -25,9 +21,7 @@
                     </thead>
                     <tbody> <% data._embedded.episodes.forEach(function(content){ %>
                         <tr>
-                            <td>
-                                <a href='/episodes/<%=content.id%>'><%=content.name%></a>
-                            </td>
+                            <td><a href='/episodes/<%=content.id%>'><%=content.name%></a></td>
                             <td><%=content.season%></td>
                             <td><%=content.number%></td>
                             <td><%=content.airdate%></td>
@@ -36,11 +30,9 @@
                     </tbody>
                 </table>
             </div>
-        </div>
-        
+        </div>        
     </div>
     <% include partials/page/footer.ejs %>
     <% include partials/page/jsdefaults.ejs %>
 </body>
-
 </html>
