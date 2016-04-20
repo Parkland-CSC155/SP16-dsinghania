@@ -4,7 +4,8 @@ var fs = require("fs");
 
 exports.episodes = function(req, res){
  //   var folder = path.join(__dirname , "data/breaking_bad.json");
-    var folder = path.join( "c:\\Users\\Dipty\\Desktop\\CSC155\\Unit14Exercise", "data/breaking_bad.json");
+    //var folder = path.join( "c:\\Users\\Dipty\\Desktop\\CSC155\\Unit14Exercise", "data/breaking_bad.json");
+    var folder = ("./data/breaking_bad.json");
 
     fs.readFile(folder, "utf-8",function(err, contents){
         if(err){
@@ -20,7 +21,8 @@ exports.episodes = function(req, res){
 exports.id = function(req, res){
     var id = req.params.id;
     id = Number(id);            //convert string to number
-    var folder = path.join("c:\\Users\\Dipty\\Desktop\\CSC155\\Unit14Exercise", "data/breaking_bad.json");
+    //var folder = path.join("c:\\Users\\Dipty\\Desktop\\CSC155\\Unit14Exercise", "data/breaking_bad.json");
+    var folder = ("./data/breaking_bad.json");
     fs.readFile(folder, "utf-8",function(err, contents){
         if(err){
             console.log(err);
